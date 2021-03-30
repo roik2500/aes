@@ -4,6 +4,9 @@ public class Main {
 
     public static void main(String[] args) {
 	// write your code here
+        if(args[0].equals('e')){
+            File keyFile = new File(args[1]);
+        }
     }
 
 
@@ -51,8 +54,9 @@ public class Main {
                 k2[i][j] = 1;
             }
         }
-        byte [][] swapK2 = AddRoundKey(cm,k2);
-        byte[][] k1 = SwapIndexes(swapK2);
+        byte [][] swapK1 = AddRoundKey(cm,k2);
+        byte[][] k1 = SwapIndexes(swapK1);
+
         try (FileOutputStream out = new FileOutputStream(output)) {
 
             for (int i = 0; i < len; i++) {
