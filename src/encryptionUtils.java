@@ -1,6 +1,8 @@
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class encryptionUtils {
     public byte[][] SwapIndexes(byte[][] message){
@@ -38,10 +40,11 @@ public class encryptionUtils {
         return SwapIndexes(AddRoundKey(aes_1,key1));
     }
 
-    public void BreakEncryption(byte[][]message, byte[][] ciphertext, String output){
+    public byte[][][] BreakEncryption(byte[][]message, byte[][] ciphertext, String output){
         int len = message.length;
         byte[][] cm = AddRoundKey(message,ciphertext);
         byte[][] k2 = new byte[len][len];
+        byte[][][] keys = new byte[2][4][4];
         for (int i = 0; i < len; i++) {
             for (int j = 0; j < len; j++) {
                 k2[i][j] = 1;
@@ -49,7 +52,8 @@ public class encryptionUtils {
         }
         byte [][] swapK1 = AddRoundKey(cm,k2);
         byte[][] k1 = SwapIndexes(swapK1);
-
+        keys[0] = k1;
+        keys[1] = k2;
         try (FileOutputStream out = new FileOutputStream(output)) {
 
             for (int i = 0; i < len; i++) {
@@ -67,5 +71,6 @@ public class encryptionUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return keys;
     }
 }
