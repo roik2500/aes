@@ -11,13 +11,14 @@ public class Main {
         // write your code here
         if (args[0].equals("e") || args[0].equals("d")) {
             byte[] keyData = new byte[32];
-            byte[] mData = new byte[32];
-            byte[] cData = new byte[32];
+            byte[] mData = new byte[16];
+            byte[] cData = new byte[16];
             byte[][][] keys = new byte[2][4][4];
             byte[][] k1 = new byte[4][4];
             byte[][] k2 = new byte[4][4];
             byte[][] m = new byte[4][4];
-            byte[][] c = new byte[0][];
+            byte[][] c = new byte[4][4];
+            int finalIndex = 0;
             keys[0] = k1;
             keys[1] = k2;
             int d = 0;
@@ -27,44 +28,54 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            byte[] finalArr = new byte[mData.length];
             for (int i = 0; i < 2; i++) {
                 for (int j = 0; j < 4; j++) {
                     for (int k = 0; k < 4; k++) {
                         keys[i][j][k] = keyData[d];
-                        if (d < 16) {
-                            m[j][k] = mData[d];
-                        }
                         d += 1;
                     }
                 }
             }
-            if (args[0].equals("e")) {
-                c = utils.Encrypt(m, k1, k2);
-                try {
-                    cData = Files.readAllBytes(Paths.get("C:\\Users\\shimon\\Downloads\\self_testing_files_2021\\cipher_short"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+            d = 0;
+            while (d < mData.length) {
+                for (int j = 0; j < 4; j++) {
+                    for (int k = 0; k < 4; k++) {
+                        m[j][k] = mData[d];
+                        d += 1;
+                    }
+                }
+                if (args[0].equals("e")) {
+                    c = utils.Encrypt(m, k1, k2);
+                    try {
+                        cData = Files.readAllBytes(Paths.get("C:\\Users\\shimon\\Downloads\\self_testing_files_2021\\cipher_short"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (args[0].equals("d")) {
+                    c = utils.Decrypt(m, k1, k2);
+                    try {
+                        cData = Files.readAllBytes(Paths.get("C:\\Users\\shimon\\Downloads\\self_testing_files_2021\\message_short"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                test1(c, cData);
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 4; j++) {
+                        finalArr[finalIndex] = c[i][j];
+                        finalIndex += 1;
+                    }
                 }
             }
-            if (args[0].equals("d")) {
-                c = utils.Decrypt(m, k1, k2);
-                try {
-                    cData = Files.readAllBytes(Paths.get("C:\\Users\\shimon\\Downloads\\self_testing_files_2021\\message_short"));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            test1(c,cData);
-
             try {
-                for (int i = 0; i < c.length; i++) {
-                    Files.write(Paths.get(args[6]), c[i]);
-                }
+                Files.write(Paths.get(args[6]), finalArr);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-    else {
+        else {
             byte[] mData = new byte[32];
             byte[] cData = new byte[32];
             try {
