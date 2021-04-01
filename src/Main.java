@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         encryptionUtils utils = new encryptionUtils();
         // write your code here
-        if (args[0].equals("e") || args[0].equals("d")) {
+        if (args[0].equals("-e") || args[0].equals("-d")) {
             byte[] keyData = new byte[32];
             byte[] mData = new byte[16];
             byte[] cData = new byte[16];
@@ -45,30 +45,31 @@ public class Main {
                         d += 1;
                     }
                 }
-                if (args[0].equals("e")) {
+                if (args[0].equals("-e")) {
                     c = utils.Encrypt(m, k1, k2);
                     try {
-                        cData = Files.readAllBytes(Paths.get("C:\\Users\\shimon\\Downloads\\self_testing_files_2021\\cipher_short"));
+                        cData = Files.readAllBytes(Paths.get("C:\\Users\\shimon\\Downloads\\self_testing_files_2021\\cipher_long"));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-                if (args[0].equals("d")) {
+                if (args[0].equals("-d")) {
                     c = utils.Decrypt(m, k1, k2);
                     try {
-                        cData = Files.readAllBytes(Paths.get("C:\\Users\\shimon\\Downloads\\self_testing_files_2021\\message_short"));
+                        cData = Files.readAllBytes(Paths.get("C:\\Users\\shimon\\Downloads\\self_testing_files_2021\\message_long"));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-                test1(c, cData);
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) {
                         finalArr[finalIndex] = c[i][j];
                         finalIndex += 1;
                     }
                 }
+
             }
+            test1(finalArr, cData);
             try {
                 Files.write(Paths.get(args[6]), finalArr);
             } catch (IOException e) {
@@ -76,8 +77,8 @@ public class Main {
             }
         }
         else {
-            byte[] mData = new byte[32];
-            byte[] cData = new byte[32];
+            byte[] mData = new byte[16];
+            byte[] cData = new byte[16];
             try {
                 mData = Files.readAllBytes(Paths.get(args[2]));
                 cData = Files.readAllBytes(Paths.get(args[4]));
@@ -96,25 +97,33 @@ public class Main {
             }
             byte[][][] keys;
             keys = utils.BreakEncryption(m,c,args[6]);
+
+//            test
             c = utils.Encrypt(m, keys[0], keys[1]);
-            try {
-                cData = Files.readAllBytes(Paths.get("C:\\Users\\shimon\\Downloads\\self_testing_files_2021\\cipher_short"));
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            byte[] cFinal = new byte[cData.length];
+            d = 0;
+            for (int i = 0; i <c.length ; i++) {
+                for (int j = 0; j <c[0].length ; j++) {
+                   cFinal[d] = c[i][j];
+                   d += 1;
+                }
             }
-            test1(c,cData);
+//            try {
+//                cData = Files.readAllBytes(Paths.get("C:\\Users\\shimon\\Downloads\\self_testing_files_2021\\cipher_long"));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            boolean bool = test1(cFinal,cData);
         }
     }
-    public static boolean test1(byte[][] c, byte[] cData){
-        int d = 0;
-        for (int j = 0; j < 4; j++) {
-            for (int k = 0; k < 4; k++) {
-                if (c[j][k] != cData[d]) {
+    public static boolean test1(byte[] c, byte[] cData){
+        for (int j = 0; j < c.length; j++) {
+                if (c[j] != cData[j]) {
                    return false;
                 }
-                d += 1;
-            }
         }
+        System.out.println("ff");
         return true;
     }
 }
